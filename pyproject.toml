@@ -1,6 +1,6 @@
 [project]
 name = "shunkei_sdk"
-version = "0.0.1"
+version = "0.0.1post1"
 authors = [{ name="Shunkei, LLC", email="info@shunkei.jp" }]
 description = "Shunkei SDK for Python"
 readme = "README.md"
