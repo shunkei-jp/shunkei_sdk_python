@@ -1,0 +1,26 @@
+[project]
+name = "shunkei_sdk"
+version = "0.0.1"
+authors = [{ name="Shunkei, LLC", email="info@shunkei.jp" }]
+description = "Shunkei SDK for Python"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "zeroconf == 0.119.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "twine",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/shunkei-jp/shunkei_sdk"
+"Bug Tracker" = "https://github.com/shunkei-jp/shunkei_sdk/issues"
