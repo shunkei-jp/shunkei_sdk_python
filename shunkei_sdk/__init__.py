@@ -7,6 +7,8 @@ from .find_shunkei import find_vtx_tx_first
 
 DEFAULT_PORT = 12334
 
+PACKET_TYPE_UART = 128
+
 # TODO: handle iroriona error
 
 class FindShunkeiError(Exception):
@@ -54,18 +56,22 @@ class ShunkeiVTX:
 
         return instance
 
-    def read(self, size: int) -> bytes:
+    def uart_read(self, size: int) -> bytes:
         if self._webRTCProxy is not None and not self._webRTCProxy.alive():
             raise Exception("webrtc proxy is stopped")
         try:
-            return self._socket.recv(size)
+            buf = self._socket.recv(size)
+            if buf[0] == PACKET_TYPE_UART:
+                return buf[1:]
+            else:
+                return None
         except BlockingIOError:
             return None
 
-    def write(self, data: bytes):
+    def uart_write(self, data: bytes):
         if self._webRTCProxy is not None and not self._webRTCProxy.alive():
             raise Exception("webrtc proxy is stopped")
-        self._socket.send(data)
+        self._socket.send(bytes([PACKET_TYPE_UART]) + data)
 
     @property
     def host(self) -> str:
