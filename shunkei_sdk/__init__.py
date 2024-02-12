@@ -46,8 +46,10 @@ class ShunkeiVTX:
         insatance._port = port
 
         insatance._recv_thread = threading.Thread(target=insatance._recv_thread_handler)
+        insatance._recv_thread.daemon = True
         insatance._recv_thread.start()
         insatance._control_rtt_thread = threading.Thread(target=insatance._rtt_thread_handler)
+        insatance._control_rtt_thread.daemon = True
         insatance._control_rtt_thread.start()
 
         return insatance
