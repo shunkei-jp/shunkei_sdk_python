@@ -13,6 +13,7 @@ classifiers = [
 
 dependencies = [
     "zeroconf == 0.119.0",
+    "requests",
 ]
 
 [project.optional-dependencies]
