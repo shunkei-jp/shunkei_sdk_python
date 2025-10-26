@@ -156,7 +156,12 @@ class ShunkeiVTX:
 
     def _recv_thread_handler(self):
         while self._alive:
-            buf = self._socket.recv(1024)
+            try:
+                buf = self._socket.recv(1024)
+            except OSError:
+                break
+            if not buf:
+                continue
             if buf[0] == PACKET_TYPE_UART:
                 self._uart_queue.put(buf[1:])
             if buf[0] == PACKET_TYPE_ECHO_RESPONSE:
@@ -168,7 +173,10 @@ class ShunkeiVTX:
     def _rtt_thread_handler(self):
         while self._alive:
             start = get_timestamp_us()
-            self._socket.send(bytes([PACKET_TYPE_ECHO_REQUEST]) + start.to_bytes(16, "little"))
+            try:
+                self._socket.send(bytes([PACKET_TYPE_ECHO_REQUEST]) + start.to_bytes(16, "little"))
+            except OSError:
+                break
             time.sleep(1)
 
     @property
@@ -181,13 +189,23 @@ class ShunkeiVTX:
 
     def close(self):
         self._alive = False
+
+        sock = getattr(self, "_socket", None)
+        if sock is not None:
+            try:
+                sock.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+            sock.close()
+            self._socket = None
+
         if self._recv_thread:
             self._recv_thread.join()
+            self._recv_thread = None
         if self._control_rtt_thread:
             self._control_rtt_thread.join()
-
-        self._socket.close()
+            self._control_rtt_thread = None
 
         if self._webRTCProxy is not None:
             self._webRTCProxy.stop()
-
+            self._webRTCProxy = None
